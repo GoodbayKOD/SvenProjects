@@ -27,7 +27,7 @@ class cyclermdl : ScriptBaseAnimating
 {
     // Config
     private string m_szModel1, m_szModel2;
-    private int m_iSequenceStart, m_iSequenceState, m_iSequenceEnd;
+    private int m_iSeq1, m_iSeq2;
     private float m_flFrameRate;
     private Vector m_Controller;
 
@@ -37,10 +37,10 @@ class cyclermdl : ScriptBaseAnimating
             m_szModel1 = szValue;
         else if( szKey == "_mdl1")
             m_szModel2 = szValue;
-        else if( szKey == "_seq1" )
-            m_iSequenceState = atoi( szValue );
         else if( szKey == "_seq0" )
-            m_iSequenceEnd = atoi( szValue );
+            m_iSeq1 = atoi( szValue );
+        else if( szKey == "_seq1" )
+            m_iSeq2 = atoi( szValue );
         else if( szKey == "controller" )
             g_Utility.StringToVector( m_Controller, szValue );
         else
@@ -53,9 +53,14 @@ class cyclermdl : ScriptBaseAnimating
     void Precache()
     {
         // Models
-        g_Game.PrecacheModel( self.pev.model );
-        g_Game.PrecacheModel( m_szModel2 );
-        g_Game.PrecacheModel( m_szModel3 );
+        if(!string(self.pev.model).IsEmpty())
+            g_Game.PrecacheModel( self.pev.model );
+
+        if(!string(m_szModel1).IsEmpty() && string(m_szModel1) != string(self.pev.model))
+           g_Game.PrecacheModel( m_szModel1 ); 
+
+        if(!string(m_szModel2).IsEmpty() && string(m_szModel2) != string(self.pev.model))
+           g_Game.PrecacheModel( m_szModel2 ); 
 
         BaseClass.Precache();
     }
@@ -80,18 +85,18 @@ class cyclermdl : ScriptBaseAnimating
         g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
 
         // Controller
-        self.pev.set_controller( 0, int(m_Controller.y) );
-        self.pev.set_controller( 1, int(m_Controller.x) );
-        self.pev.set_controller( 2, int(m_Controller.z) );
+        self.pev.set_controller( 0, int(m_Controller.0) );
+        self.pev.set_controller( 1, int(m_Controller.1) );
+        self.pev.set_controller( 2, int(m_Controller.2) );
+        self.pev.set_controller( 3, int(m_Controller.3) );
 
         // Current state
         self.pev.iuser1 = CYCLER_START;
 
         // Save data
-        m_szModelStart      = self.pev.model;
-        m_iSequenceStart    = self.pev.sequence;
-        m_flFrameRate       = self.pev.framerate;
+        m_flFrameRate = self.pev.framerate;
         
+        // Spawn
         BaseClass.Spawn();
     }
 
@@ -100,31 +105,22 @@ class cyclermdl : ScriptBaseAnimating
         // Filter by entity called state
         switch( self.pev.iuser1 )
         {
-            case CYCLER_START:
+            case MDL_1:
             {
                 UpdateModel( self, m_szModelState, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSequenceState );
+                SetSequence( self, m_iSeq1, m_flFrameRate );
 
                 // Next State
-                self.pev.iuser1 = CYCLER_CHANGE;
+                self.pev.iuser1 = MDL_2;
                 break;
             }
-            case CYCLER_CHANGE:
+            case MDL_2:
             {   
                 UpdateModel( self, m_szModelEnd, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSequenceEnd );
+                SetSequence( self, m_iSeq2, m_flFrameRate );
 
                 // Next State
-                self.pev.iuser1 = CYCLER_END;
-                break;
-            }
-            case CYCLER_END:
-            {
-                UpdateModel( self, m_szModelStart, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSequenceStart );
-
-                // Next State
-                self.pev.iuser1 = CYCLER_START;
+                self.pev.iuser1 = MDL_1;
                 break;
             }
         }
