@@ -18,9 +18,8 @@ namespace CYCLERMODEL
 
 enum CyclerState
 {
-    CYCLER_START = 0,
-    CYCLER_CHANGE,
-    CYCLER_END
+    MDL_1 = 0,
+    MDL_2
 };
 
 class cyclermdl : ScriptBaseAnimating
@@ -52,15 +51,8 @@ class cyclermdl : ScriptBaseAnimating
     // Precache the models
     void Precache()
     {
-        // Models
-        if(!string(self.pev.model).IsEmpty())
-            g_Game.PrecacheModel( self.pev.model );
-
-        if(!string(m_szModel1).IsEmpty() && string(m_szModel1) != string(self.pev.model))
-           g_Game.PrecacheModel( m_szModel1 ); 
-
-        if(!string(m_szModel2).IsEmpty() && string(m_szModel2) != string(self.pev.model))
-           g_Game.PrecacheModel( m_szModel2 ); 
+        g_Game.PrecacheModel( m_szModel1 ); 
+        g_Game.PrecacheModel( m_szModel2 ); 
 
         BaseClass.Precache();
     }
@@ -71,7 +63,7 @@ class cyclermdl : ScriptBaseAnimating
         self.Precache();
         
         // Model
-        g_EntityFuncs.SetModel( self, self.pev.model );
+        g_EntityFuncs.SetModel( self, m_szModel1 );
 
         // Physics
         self.pev.solid      = SOLID_SLIDEBOX;
@@ -91,7 +83,7 @@ class cyclermdl : ScriptBaseAnimating
         self.pev.set_controller( 3, int(m_Controller.3) );
 
         // Current state
-        self.pev.iuser1 = CYCLER_START;
+        self.pev.iuser1 = MDL_1;
 
         // Save data
         m_flFrameRate = self.pev.framerate;
