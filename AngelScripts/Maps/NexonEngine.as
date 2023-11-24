@@ -1,16 +1,6 @@
 void MapInit()
 {
     CYCLERMODEL::EntityRegister();
-
-    // Triggers
-    //TRIGGERGRAVITY::EntityRegister();
-    //TRIGGERSPEED::EntityRegister();
-
-    // Button
-    //BUTTONGAUGE::EntityRegister();
-
-    // Misc
-    //MOUNTGUN::EntityRegister();
 }
 
 namespace CYCLERMODEL
@@ -77,10 +67,9 @@ class cyclermdl : ScriptBaseAnimating
         g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
 
         // Controller
-        self.pev.set_controller( 0, int(m_Controller.0) );
-        self.pev.set_controller( 1, int(m_Controller.1) );
-        self.pev.set_controller( 2, int(m_Controller.2) );
-        self.pev.set_controller( 3, int(m_Controller.3) );
+        self.pev.set_controller( 0, int(m_Controller.y) );
+        self.pev.set_controller( 1, int(m_Controller.x) );
+        self.pev.set_controller( 2, int(m_Controller.z) );
 
         // Current state
         self.pev.iuser1 = MDL_1;
@@ -99,17 +88,17 @@ class cyclermdl : ScriptBaseAnimating
         {
             case MDL_1:
             {
-                UpdateModel( self, m_szModelState, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSeq1, m_flFrameRate );
+                UpdateModel( self, m_szModel2, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                SetSequence( self, m_iSeq2, m_flFrameRate );
 
-                // Next State
+                // Next Statew
                 self.pev.iuser1 = MDL_2;
                 break;
             }
             case MDL_2:
             {   
-                UpdateModel( self, m_szModelEnd, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSeq2, m_flFrameRate );
+                UpdateModel( self, m_szModel1, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                SetSequence( self, m_iSeq1, m_flFrameRate );
 
                 // Next State
                 self.pev.iuser1 = MDL_1;
