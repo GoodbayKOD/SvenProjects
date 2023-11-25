@@ -12,7 +12,7 @@ enum CyclerState
     MDL_2
 };
 
-class cyclermdl : ScriptBaseAnimating
+final class cyclermdl : ScriptBaseAnimating
 {
     // Config
     private string m_szModel1, m_szModel2;
@@ -58,9 +58,11 @@ class cyclermdl : ScriptBaseAnimating
         // Physics
         self.pev.solid      = SOLID_SLIDEBOX;
         self.pev.movetype   = MOVETYPE_NONE;
-
-        // No damage
         self.pev.takedamage	= DAMAGE_NO;
+
+        self.pev.sequence = m_iSeq1;
+        self.ResetSequenceInfo();
+        self.pev.frame = 0;
 
         // Size & origin
         g_EntityFuncs.SetOrigin( self, self.pev.origin );
@@ -74,9 +76,6 @@ class cyclermdl : ScriptBaseAnimating
         // Current state
         self.pev.iuser1 = MDL_1;
 
-        // Save data
-        m_flFrameRate = self.pev.framerate;
-        
         // Spawn
         BaseClass.Spawn();
     }
@@ -88,8 +87,15 @@ class cyclermdl : ScriptBaseAnimating
         {
             case MDL_1:
             {
-                UpdateModel( self, m_szModel2, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSeq2, m_flFrameRate );
+                if(string(self.pev.model) != m_szModel2)
+                {
+                    g_EntityFuncs.SetModel( self, m_szModel2 );
+                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
+                    g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                }
+
+                self.pev.sequence = m_iSeq2;
+                self.ResetSequenceInfo();
 
                 // Next Statew
                 self.pev.iuser1 = MDL_2;
@@ -97,8 +103,15 @@ class cyclermdl : ScriptBaseAnimating
             }
             case MDL_2:
             {   
-                UpdateModel( self, m_szModel1, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
-                SetSequence( self, m_iSeq1, m_flFrameRate );
+                if(string(self.pev.model) != m_szModel1)
+                {
+                    g_EntityFuncs.SetModel( self, m_szModel1 );
+                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
+                    g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                }
+                
+                self.pev.sequence = m_iSeq1;
+                self.ResetSequenceInfo();
 
                 // Next State
                 self.pev.iuser1 = MDL_1;
@@ -116,18 +129,3 @@ bool EntityRegister()
 }
 
 } // End
-
-// Stocks
-void UpdateModel(CBaseEntity@ entity, const string& in szModel, const Vector& in vMins, const Vector& in vMaxs)
-{
-    g_EntityFuncs.SetModel( entity, szModel );
-    g_EntityFuncs.SetOrigin( entity, entity.pev.origin );
-    g_EntityFuncs.SetSize( entity.pev, vMins, vMaxs );
-}
-
-void SetSequence(CBaseEntity@ entity, const int& in iSequence, const float& in flFrameRate = 1.0)
-{
-    entity.pev.animtime = g_Engine.time;
-    entity.pev.framerate = flFrameRate;
-    entity.pev.sequence = iSequence;
-}
