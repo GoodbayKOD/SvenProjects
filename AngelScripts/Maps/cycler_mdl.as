@@ -65,8 +65,8 @@ final class cyclermdl : ScriptBaseAnimating
         self.pev.frame = 0;
 
         // Size & origin
-        g_EntityFuncs.SetOrigin( self, self.pev.origin );
         g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+        g_EntityFuncs.SetOrigin( self, self.pev.origin );
 
         // Controller
         self.pev.set_controller( 0, int(m_Controller.y) );
@@ -90,8 +90,8 @@ final class cyclermdl : ScriptBaseAnimating
                 if(string(self.pev.model) != m_szModel2)
                 {
                     g_EntityFuncs.SetModel( self, m_szModel2 );
-                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
                     g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
                 }
 
                 self.pev.sequence = m_iSeq2;
@@ -106,8 +106,8 @@ final class cyclermdl : ScriptBaseAnimating
                 if(string(self.pev.model) != m_szModel1)
                 {
                     g_EntityFuncs.SetModel( self, m_szModel1 );
-                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
                     g_EntityFuncs.SetSize( self.pev, Vector( -16, -16, 0 ), Vector( 16, 16, 16 ) );
+                    g_EntityFuncs.SetOrigin( self, self.pev.origin );
                 }
                 
                 self.pev.sequence = m_iSeq1;
